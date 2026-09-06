@@ -1,0 +1,832 @@
+<title>Largada Cero</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Big+Shoulders+Stencil:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --canvas:#ddd5b8;
+    --canvas-panel:#cfc6a2;
+    --canvas-panel-2:#c3b98f;
+    --ink:#201d13;
+    --ink-soft:#5a5540;
+    --line:#8a8163;
+    --line-strong:#5c5640;
+    --accent:#ff5f1f;
+    --accent-ink:#1b1206;
+    --sky-top:#bfe3ee;
+    --sky-bottom:#eef0d6;
+    --cloud:#fbfdf7;
+    --grass:#7a9a52;
+    --grass-shade:#5a7a3a;
+    --celestial:#ffcf5c;
+    --celestial-glow:#fff1c4;
+    --shadow:rgba(32,29,19,.25);
+    --tier-comun:#8f8763; --tier-comun-ink:#201d13;
+    --tier-poco:#3f7a4c; --tier-poco-ink:#f2efe0;
+    --tier-raro:#33689a; --tier-raro-ink:#f2efe0;
+    --tier-epico:#7c3f9e; --tier-epico-ink:#f2efe0;
+    --tier-legend:#e0500f; --tier-legend-ink:#1b1206;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --canvas:#161a12;
+      --canvas-panel:#232819;
+      --canvas-panel-2:#2b311f;
+      --ink:#e9e4d0;
+      --ink-soft:#b3ac8c;
+      --line:#4a5138;
+      --line-strong:#6b7350;
+      --accent:#ff7a3d;
+      --accent-ink:#1b1206;
+      --sky-top:#0a1220;
+      --sky-bottom:#1b2a20;
+      --cloud:#dfe6d2;
+      --grass:#3c5730;
+      --grass-shade:#263a1f;
+      --celestial:#e7ecf2;
+      --celestial-glow:#7c8aa8;
+      --shadow:rgba(0,0,0,.55);
+      --tier-comun:#b6ad83; --tier-comun-ink:#1b1a10;
+      --tier-poco:#5cad6c; --tier-poco-ink:#0e1a10;
+      --tier-raro:#5a9bd6; --tier-raro-ink:#0c1620;
+      --tier-epico:#b077d1; --tier-epico-ink:#1a0f21;
+      --tier-legend:#ff7a3d; --tier-legend-ink:#1b1206;
+    }
+  }
+  :root[data-theme="dark"]{
+    --canvas:#161a12;
+    --canvas-panel:#232819;
+    --canvas-panel-2:#2b311f;
+    --ink:#e9e4d0;
+    --ink-soft:#b3ac8c;
+    --line:#4a5138;
+    --line-strong:#6b7350;
+    --accent:#ff7a3d;
+    --accent-ink:#1b1206;
+    --sky-top:#0c1420;
+    --sky-bottom:#1a2b21;
+    --shadow:rgba(0,0,0,.55);
+    --tier-comun:#b6ad83; --tier-comun-ink:#1b1a10;
+    --tier-poco:#5cad6c; --tier-poco-ink:#0e1a10;
+    --tier-raro:#5a9bd6; --tier-raro-ink:#0c1620;
+    --tier-epico:#b077d1; --tier-epico-ink:#1a0f21;
+    --tier-legend:#ff7a3d; --tier-legend-ink:#1b1206;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--canvas);
+    color:var(--ink);
+    font-family:'Archivo',Arial,Helvetica,sans-serif;
+    line-height:1.55;
+  }
+  h1,h2{
+    font-family:'Big Shoulders Stencil','Arial Narrow',sans-serif;
+    text-transform:uppercase;
+    text-wrap:balance;
+    margin:0;
+  }
+  .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;}
+  .tabular{font-variant-numeric:tabular-nums;}
+
+  .sheet{
+    max-width:880px;
+    margin:0 auto;
+    padding:2rem 1.25rem 3rem;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    border-bottom:3px double var(--line-strong);
+    padding-bottom:1rem;
+    margin-bottom:1.75rem;
+  }
+  .masthead-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:1rem 1.5rem;
+  }
+  .brand{display:flex; align-items:center; gap:.65rem;}
+  .brand svg{flex:none; color:var(--accent);}
+  .brand h1{font-size:clamp(1.9rem,5.5vw,2.7rem); letter-spacing:.03em;}
+  .manifest-meta{display:flex; gap:1.5rem; margin:0;}
+  .manifest-meta > div{display:flex; flex-direction:column; gap:.15rem;}
+  .manifest-meta dt{
+    font-size:.65rem; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--ink-soft); font-weight:600;
+  }
+  .manifest-meta dd{margin:0; font-size:.85rem;}
+  .tagline{margin:.85rem 0 0; max-width:60ch; color:var(--ink-soft); font-size:.95rem;}
+
+  /* ---------- stage ---------- */
+  .stage{margin-bottom:2.5rem;}
+
+  .mission-clock{
+    display:flex;
+    align-items:flex-end;
+    gap:2rem;
+    flex-wrap:wrap;
+    margin-bottom:1rem;
+  }
+  .clock-stat{display:flex; flex-direction:column; gap:.2rem;}
+  .clock-stat .stat-label{
+    font-size:.68rem; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--ink-soft); font-weight:600;
+  }
+  .clock-stat .stat-value{
+    font-family:'Big Shoulders Stencil',sans-serif;
+    font-weight:900;
+    line-height:1;
+  }
+  #timer{font-size:clamp(2.6rem,9vw,4.2rem);}
+  #altitude{font-size:clamp(1.6rem,5vw,2.3rem); color:var(--ink-soft);}
+
+  .sky{
+    position:relative;
+    isolation:isolate;
+    height:280px;
+    border:2px solid var(--line-strong);
+    border-radius:2px;
+    background:linear-gradient(var(--sky-top),var(--sky-bottom));
+    overflow:hidden;
+    box-shadow:inset 0 0 0 6px color-mix(in srgb, var(--canvas) 55%, transparent);
+    transition:box-shadow .3s ease;
+  }
+  .sky.impact-flash{box-shadow:inset 0 0 0 6px var(--accent);}
+  .sky-bg{
+    position:absolute; z-index:0; inset:0;
+    width:100%; height:100%;
+    display:block;
+  }
+  .crate-shadow{
+    position:absolute; z-index:1;
+    left:50%; bottom:14%;
+    width:34px; height:10px;
+    transform:translate(-50%,50%) scale(.3);
+    background:radial-gradient(closest-side, color-mix(in srgb, var(--ink) 70%, transparent), transparent 75%);
+    opacity:.15;
+    border-radius:50%;
+    transition:opacity .1s linear;
+  }
+
+  .altimeter{
+    position:absolute; z-index:1; inset:0;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:.5rem .6rem;
+    pointer-events:none;
+  }
+  .altimeter span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.7rem;
+    color:color-mix(in srgb, var(--sky-top) 20%, white 80%);
+    opacity:.65;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .crate{
+    position:absolute;
+    z-index:2;
+    left:50%;
+    top:0%;
+    transform:translateX(-50%);
+    width:56px;
+    color:var(--ink);
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .crate.motion{animation:sway 2.4s ease-in-out infinite alternate;}
+    .crate.impact{animation:impact .5s ease-out;}
+  }
+  @keyframes sway{
+    from{transform:translateX(-50%) rotate(-4deg);}
+    to{transform:translateX(-50%) rotate(4deg);}
+  }
+  @keyframes impact{
+    0%{transform:translateX(-50%) scaleY(1);}
+    35%{transform:translateX(-50%) scaleY(.55);}
+    100%{transform:translateX(-50%) scaleY(1);}
+  }
+
+  .stage-controls{
+    display:flex;
+    align-items:center;
+    gap:1rem 1.5rem;
+    flex-wrap:wrap;
+    margin-top:1rem;
+  }
+  .field{display:flex; flex-direction:column; gap:.25rem;}
+  .field label{
+    font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-soft); font-weight:600;
+  }
+  select, input[type="text"]{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem;
+    padding:.5rem .6rem;
+    background:var(--canvas-panel);
+    border:1.5px solid var(--line);
+    border-radius:2px;
+    color:var(--ink);
+  }
+  select:focus-visible, input:focus-visible, button:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+  }
+
+  button{
+    font-family:'Archivo',sans-serif;
+    cursor:pointer;
+    border-radius:2px;
+  }
+  .btn-deploy{
+    background:var(--accent);
+    color:var(--accent-ink);
+    border:1.5px solid var(--accent);
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    font-size:.85rem;
+    padding:.75rem 1.4rem;
+    transition:filter .15s ease, transform .1s ease;
+  }
+  .btn-deploy:hover:not(:disabled){filter:brightness(1.08);}
+  .btn-deploy:active:not(:disabled){transform:translateY(1px);}
+  .btn-deploy:disabled{opacity:.55; cursor:not-allowed;}
+
+  .btn-ghost{
+    background:transparent;
+    border:1.5px dashed var(--line);
+    color:var(--ink-soft);
+    font-size:.8rem;
+    font-weight:600;
+    padding:.55rem 1rem;
+    margin-top:.85rem;
+  }
+  .btn-ghost:hover{border-color:var(--accent); color:var(--ink);}
+
+  .status{
+    width:100%;
+    margin:.4rem 0 0;
+    font-size:.85rem;
+    color:var(--ink-soft);
+    min-height:1.3em;
+  }
+
+  /* ---------- reveal card ---------- */
+  .reveal{
+    margin-top:1.5rem;
+    padding:1.1rem 1.3rem;
+    background:var(--canvas-panel);
+    border:1.5px solid var(--line);
+    border-left:6px solid var(--tier-comun);
+    border-radius:2px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1rem;
+    flex-wrap:wrap;
+    animation:reveal-in .35s ease-out;
+  }
+  @keyframes reveal-in{
+    from{opacity:0; transform:translateY(6px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{animation:none;}
+  }
+  .reveal.tier-comun{border-left-color:var(--tier-comun);}
+  .reveal.tier-poco{border-left-color:var(--tier-poco);}
+  .reveal.tier-raro{border-left-color:var(--tier-raro);}
+  .reveal.tier-epico{border-left-color:var(--tier-epico);}
+  .reveal.tier-legend{border-left-color:var(--tier-legend);}
+  .reveal-item{font-size:1.15rem; font-weight:700;}
+  .reveal-meta{font-family:'IBM Plex Mono',monospace; font-size:.75rem; color:var(--ink-soft);}
+  .stamp{
+    font-family:'Big Shoulders Stencil',sans-serif;
+    font-weight:900;
+    font-size:.85rem;
+    letter-spacing:.08em;
+    color:var(--accent);
+    border:2px solid var(--accent);
+    padding:.3rem .6rem;
+    border-radius:2px;
+    transform:rotate(-3deg);
+  }
+
+  /* ---------- badges ---------- */
+  .badge{
+    display:inline-block;
+    font-family:'Archivo',sans-serif;
+    font-size:.7rem;
+    font-weight:700;
+    letter-spacing:.03em;
+    padding:.2rem .55rem;
+    border-radius:2px;
+  }
+  .badge.tier-comun{background:var(--tier-comun); color:var(--tier-comun-ink);}
+  .badge.tier-poco{background:var(--tier-poco); color:var(--tier-poco-ink);}
+  .badge.tier-raro{background:var(--tier-raro); color:var(--tier-raro-ink);}
+  .badge.tier-epico{background:var(--tier-epico); color:var(--tier-epico-ink);}
+  .badge.tier-legend{background:var(--tier-legend); color:var(--tier-legend-ink);}
+
+  /* ---------- sections ---------- */
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:.3rem 1rem;
+    border-bottom:1.5px solid var(--line);
+    padding-bottom:.4rem;
+    margin-bottom:.9rem;
+  }
+  .section-head h2{font-size:1.15rem; letter-spacing:.03em;}
+  .section-note{font-size:.75rem; color:var(--ink-soft);}
+
+  .manifest-section, .ledger-section{margin-bottom:2.25rem;}
+
+  .table-scroll{overflow-x:auto;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.85rem;
+  }
+  thead th{
+    text-align:left;
+    font-size:.68rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    font-weight:600;
+    padding:.4rem .5rem;
+    border-bottom:1.5px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:.5rem;
+    border-bottom:1px solid var(--line);
+    vertical-align:middle;
+  }
+  tbody tr:last-child td{border-bottom:1px solid var(--line);}
+  .sku{color:var(--ink-soft);}
+  .manifest-table input[type="text"]{width:100%; min-width:10rem;}
+  .row-remove{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    width:1.8rem; height:1.8rem;
+    font-size:1rem;
+    line-height:1;
+  }
+  .row-remove:hover{border-color:var(--accent); color:var(--accent);}
+  .row-remove:disabled{opacity:.35; cursor:not-allowed;}
+
+  .example-row{opacity:.6; font-style:italic;}
+
+  .fine-print{
+    margin-top:2rem;
+    padding-top:1rem;
+    border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    color:var(--ink-soft);
+    max-width:65ch;
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <div class="masthead-row">
+      <div class="brand">
+        <svg width="34" height="34" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <path d="M12 12 L32 3 L52 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M12 12 L32 34 M52 12 L32 34 M32 3 L32 34" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <h1>Largada Cero</h1>
+      </div>
+      <dl class="manifest-meta">
+        <div><dt>Base</dt><dd class="mono">Punta Indio · 35°22'S 57°17'O</dd></div>
+        <div><dt>Manifiesto N.º</dt><dd class="mono" id="manifestNo">—</dd></div>
+      </dl>
+    </div>
+    <p class="tagline">Armá el cargamento, presioná largada y mirá qué toca en tierra cuando el contador llega a cero.</p>
+  </header>
+
+  <section class="stage" aria-label="Zona de largada">
+    <div class="mission-clock">
+      <div class="clock-stat">
+        <span class="stat-label">Tiempo</span>
+        <span class="stat-value tabular" id="timer">00:15</span>
+      </div>
+      <div class="clock-stat">
+        <span class="stat-label">Altitud</span>
+        <span class="stat-value tabular" id="altitude">900m</span>
+      </div>
+    </div>
+
+    <div class="sky" id="sky">
+      <svg class="sky-bg" viewBox="0 0 400 220" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="celestialGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:var(--celestial-glow); stop-opacity:0.55"/>
+            <stop offset="100%" style="stop-color:var(--celestial-glow); stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="345" cy="30" r="34" fill="url(#celestialGlow)"/>
+        <circle cx="345" cy="30" r="13" fill="var(--celestial)"/>
+        <g fill="var(--cloud)">
+          <circle cx="46" cy="48" r="16"/>
+          <circle cx="64" cy="40" r="20"/>
+          <circle cx="84" cy="47" r="15"/>
+          <rect x="46" y="46" width="38" height="14" rx="7"/>
+        </g>
+        <g fill="var(--cloud)" opacity="0.9">
+          <circle cx="248" cy="34" r="12"/>
+          <circle cx="261" cy="28" r="15"/>
+          <circle cx="276" cy="34" r="11"/>
+          <rect x="248" y="32" width="28" height="10" rx="5"/>
+        </g>
+        <path d="M0,204 C60,190 140,200 200,193 C260,187 340,199 400,191 L400,220 L0,220 Z" fill="var(--grass-shade)"/>
+        <path d="M0,198 C60,184 140,194 200,187 C260,181 340,193 400,185 L400,220 L0,220 Z" fill="var(--grass)"/>
+      </svg>
+      <div class="altimeter">
+        <span>900m</span><span>675m</span><span>450m</span><span>225m</span><span>0m</span>
+      </div>
+      <div class="crate-shadow" id="crateShadow"></div>
+      <div class="crate" id="crate">
+        <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
+          <path d="M6 18 Q32 -6 58 18 Q46 12 32 16 Q18 12 6 18 Z" fill="var(--accent)" stroke="var(--ink)" stroke-width="1.5"/>
+          <path d="M6 18 L23 37 M58 18 L41 37 M32 16 L32 37" stroke="var(--ink)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <rect x="21" y="37" width="22" height="18" rx="1.5" fill="var(--canvas-panel-2)" stroke="var(--ink)" stroke-width="2.2"/>
+          <line x1="21" y1="46" x2="43" y2="46" stroke="var(--ink)" stroke-width="1.6"/>
+          <line x1="32" y1="37" x2="32" y2="55" stroke="var(--ink)" stroke-width="1.6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="stage-controls">
+      <div class="field">
+        <label for="durationSelect">Duración de la largada</label>
+        <select id="durationSelect">
+          <option value="10">10 segundos</option>
+          <option value="15" selected>15 segundos</option>
+          <option value="30">30 segundos</option>
+        </select>
+      </div>
+      <button id="deployBtn" class="btn-deploy">Armar largada</button>
+      <p class="status" id="statusText">Cargamento listo. Presioná «Armar largada» para iniciar la cuenta regresiva.</p>
+    </div>
+
+    <div class="reveal tier-comun" id="reveal" hidden>
+      <div>
+        <div class="reveal-item" id="revealItem">—</div>
+        <div class="reveal-meta" id="revealMeta">—</div>
+      </div>
+      <span class="stamp">Entregado</span>
+    </div>
+  </section>
+
+  <section class="manifest-section">
+    <div class="section-head">
+      <h2>Manifiesto de carga</h2>
+      <span class="section-note">Editá qué puede caer y con qué rareza.</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>SKU</th><th>Ítem</th><th>Rareza</th><th></th></tr></thead>
+        <tbody id="manifestBody"></tbody>
+      </table>
+    </div>
+    <button id="addItemBtn" class="btn-ghost">+ Agregar ítem</button>
+  </section>
+
+  <section class="ledger-section">
+    <div class="section-head">
+      <h2>Bitácora de largadas</h2>
+      <span class="section-note" id="ledgerNote">Estas 3 son de ejemplo. Se borran en tu primera largada.</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>DZ</th><th>Hora</th><th>Ítem</th><th>Rareza</th></tr></thead>
+        <tbody id="ledgerBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="fine-print">
+    Es un simulador, no una app de logística real. Todo lo que cargues queda guardado en tu navegador nomás.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var TIERS = [
+    {key:'comun',  label:'Común',       weight:50},
+    {key:'poco',   label:'Poco común',  weight:30},
+    {key:'raro',   label:'Raro',        weight:14},
+    {key:'epico',  label:'Épico',       weight:5},
+    {key:'legend', label:'Legendario',  weight:1}
+  ];
+  function tierByKey(k){ return TIERS.find(function(t){ return t.key === k; }) || TIERS[0]; }
+
+  var MANIFEST_KEY = 'largadacero-manifiesto-v1';
+  var LEDGER_KEY = 'largadacero-bitacora-v1';
+  var MAX_ALTITUDE = 900;
+  var MAX_LEDGER_ROWS = 30;
+
+  var DEFAULT_MANIFEST = [
+    {name:'Botiquín de emergencia', tier:'comun'},
+    {name:'Ración de campaña (MRE)', tier:'comun'},
+    {name:'Radio de onda corta', tier:'poco'},
+    {name:'Kit de puntería GPS', tier:'raro'},
+    {name:'Chaleco antibalas táctico', tier:'epico'},
+    {name:'Baliza de rescate satelital', tier:'legend'}
+  ];
+
+  var EXAMPLE_LEDGER = [
+    {dz:'DZ-J4R7', time:'13:42', item:'Radio de onda corta', tier:'poco', example:true},
+    {dz:'DZ-Q1B9', time:'09:15', item:'Botiquín de emergencia', tier:'comun', example:true},
+    {dz:'DZ-M8X2', time:'22:03', item:'Kit de puntería GPS', tier:'raro', example:true}
+  ];
+
+  var reduceMotion = false;
+  try{ reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  var manifest = [];
+  var ledger = [];
+  var isExampleLedger = true;
+  var idSeq = 1;
+  var running = false;
+
+  function loadManifest(){
+    try{
+      var raw = localStorage.getItem(MANIFEST_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(Array.isArray(parsed) && parsed.length){ return parsed; }
+      }
+    }catch(e){}
+    return DEFAULT_MANIFEST.slice();
+  }
+  function saveManifest(){
+    try{
+      localStorage.setItem(MANIFEST_KEY, JSON.stringify(manifest.map(function(i){
+        return {name:i.name, tier:i.tier};
+      })));
+    }catch(e){}
+  }
+  function loadLedger(){
+    try{
+      var raw = localStorage.getItem(LEDGER_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(Array.isArray(parsed)){
+          isExampleLedger = false;
+          return parsed;
+        }
+      }
+    }catch(e){}
+    isExampleLedger = true;
+    return EXAMPLE_LEDGER.slice();
+  }
+  function saveLedger(){
+    try{ localStorage.setItem(LEDGER_KEY, JSON.stringify(ledger)); }catch(e){}
+  }
+
+  manifest = loadManifest().map(function(i){ return {id:idSeq++, name:i.name, tier:i.tier}; });
+  ledger = loadLedger();
+
+  var manifestBody = document.getElementById('manifestBody');
+  var ledgerBody = document.getElementById('ledgerBody');
+  var ledgerNote = document.getElementById('ledgerNote');
+  var addItemBtn = document.getElementById('addItemBtn');
+  var deployBtn = document.getElementById('deployBtn');
+  var durationSelect = document.getElementById('durationSelect');
+  var statusText = document.getElementById('statusText');
+  var timerEl = document.getElementById('timer');
+  var altitudeEl = document.getElementById('altitude');
+  var sky = document.getElementById('sky');
+  var crate = document.getElementById('crate');
+  var crateShadow = document.getElementById('crateShadow');
+  var reveal = document.getElementById('reveal');
+  var revealItem = document.getElementById('revealItem');
+  var revealMeta = document.getElementById('revealMeta');
+
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function fmtTime(sec){
+    var s = Math.max(0, Math.ceil(sec));
+    return pad2(Math.floor(s/60)) + ':' + pad2(s % 60);
+  }
+  function randomDZ(){
+    var letters = 'BCDFGHJKMNPQRSTVWXYZ';
+    var l = letters[Math.floor(Math.random()*letters.length)];
+    var n = Math.floor(1000 + Math.random()*9000);
+    return 'DZ-' + l + n;
+  }
+
+  function renderManifest(){
+    manifestBody.innerHTML = '';
+    manifest.forEach(function(row, idx){
+      var tr = document.createElement('tr');
+
+      var skuTd = document.createElement('td');
+      skuTd.className = 'sku mono';
+      skuTd.textContent = 'CRG-' + String(idx+1).padStart(3,'0');
+      tr.appendChild(skuTd);
+
+      var nameTd = document.createElement('td');
+      var nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.value = row.name;
+      nameInput.setAttribute('aria-label', 'Nombre del ítem ' + (idx+1));
+      nameInput.addEventListener('input', function(){
+        row.name = nameInput.value;
+        saveManifest();
+      });
+      nameTd.appendChild(nameInput);
+      tr.appendChild(nameTd);
+
+      var tierTd = document.createElement('td');
+      var select = document.createElement('select');
+      TIERS.forEach(function(t){
+        var opt = document.createElement('option');
+        opt.value = t.key;
+        opt.textContent = t.label;
+        if(t.key === row.tier) opt.selected = true;
+        select.appendChild(opt);
+      });
+      select.setAttribute('aria-label', 'Rareza del ítem ' + (idx+1));
+      select.addEventListener('change', function(){
+        row.tier = select.value;
+        saveManifest();
+      });
+      tierTd.appendChild(select);
+      tr.appendChild(tierTd);
+
+      var removeTd = document.createElement('td');
+      var removeBtn = document.createElement('button');
+      removeBtn.className = 'row-remove';
+      removeBtn.textContent = '×';
+      removeBtn.setAttribute('aria-label', 'Quitar ' + (row.name || 'ítem'));
+      removeBtn.disabled = manifest.length <= 1;
+      removeBtn.addEventListener('click', function(){
+        manifest = manifest.filter(function(r){ return r.id !== row.id; });
+        saveManifest();
+        renderManifest();
+      });
+      removeTd.appendChild(removeBtn);
+      tr.appendChild(removeTd);
+
+      manifestBody.appendChild(tr);
+    });
+  }
+
+  function renderLedger(){
+    ledgerBody.innerHTML = '';
+    ledger.slice(0, MAX_LEDGER_ROWS).forEach(function(row){
+      var tr = document.createElement('tr');
+      if(row.example) tr.className = 'example-row';
+
+      var dzTd = document.createElement('td');
+      dzTd.className = 'mono';
+      dzTd.textContent = row.dz;
+      tr.appendChild(dzTd);
+
+      var timeTd = document.createElement('td');
+      timeTd.className = 'mono';
+      timeTd.textContent = row.time;
+      tr.appendChild(timeTd);
+
+      var itemTd = document.createElement('td');
+      itemTd.textContent = row.item;
+      tr.appendChild(itemTd);
+
+      var tierTd = document.createElement('td');
+      var t = tierByKey(row.tier);
+      var badge = document.createElement('span');
+      badge.className = 'badge tier-' + t.key;
+      badge.textContent = t.label;
+      tierTd.appendChild(badge);
+      tr.appendChild(tierTd);
+
+      ledgerBody.appendChild(tr);
+    });
+  }
+
+  addItemBtn.addEventListener('click', function(){
+    manifest.push({id:idSeq++, name:'', tier:'comun'});
+    saveManifest();
+    renderManifest();
+    var inputs = manifestBody.querySelectorAll('input[type="text"]');
+    if(inputs.length) inputs[inputs.length-1].focus();
+  });
+
+  function pickWeighted(items){
+    var total = items.reduce(function(sum, i){ return sum + tierByKey(i.tier).weight; }, 0);
+    var r = Math.random() * total;
+    for(var i = 0; i < items.length; i++){
+      r -= tierByKey(items[i].tier).weight;
+      if(r <= 0) return items[i];
+    }
+    return items[items.length - 1];
+  }
+
+  function setControlsEnabled(enabled){
+    deployBtn.disabled = !enabled;
+    durationSelect.disabled = !enabled;
+  }
+
+  function deploy(){
+    var validItems = manifest.filter(function(i){ return i.name && i.name.trim(); });
+    if(!validItems.length){
+      statusText.textContent = 'Cargá al menos un ítem con nombre en el manifiesto antes de largar.';
+      return;
+    }
+    if(running) return;
+    running = true;
+    setControlsEnabled(false);
+    reveal.hidden = true;
+    sky.classList.remove('impact-flash');
+    crate.classList.remove('impact');
+    crate.style.top = '0%';
+    crateShadow.style.transform = 'translate(-50%,50%) scale(.3)';
+    crateShadow.style.opacity = '.15';
+    if(!reduceMotion) crate.classList.add('motion');
+
+    var duration = parseInt(durationSelect.value, 10) * 1000;
+    var start = performance.now();
+    statusText.textContent = 'Largada en curso — objeto en descenso.';
+
+    function frame(now){
+      var elapsed = now - start;
+      var progress = Math.min(1, elapsed / duration);
+      timerEl.textContent = fmtTime((duration - elapsed) / 1000);
+      altitudeEl.textContent = Math.round(MAX_ALTITUDE * (1 - progress)) + 'm';
+      if(!reduceMotion){
+        crate.style.top = (progress * 67) + '%';
+        crateShadow.style.transform = 'translate(-50%,50%) scale(' + (0.3 + progress * 0.7).toFixed(2) + ')';
+        crateShadow.style.opacity = (0.15 + progress * 0.35).toFixed(2);
+      }
+      if(progress < 1){
+        requestAnimationFrame(frame);
+      }else{
+        impact();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function impact(){
+    timerEl.textContent = '00:00';
+    altitudeEl.textContent = '0m';
+    crate.classList.remove('motion');
+    crate.style.top = '67%';
+    crateShadow.style.transform = 'translate(-50%,50%) scale(1)';
+    crateShadow.style.opacity = '.5';
+    if(!reduceMotion) crate.classList.add('impact');
+    sky.classList.add('impact-flash');
+    setTimeout(function(){ sky.classList.remove('impact-flash'); }, 400);
+
+    var candidates = manifest.filter(function(i){ return i.name && i.name.trim(); });
+    var chosen = pickWeighted(candidates);
+    var t = tierByKey(chosen.tier);
+    var dz = randomDZ();
+    var time = new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+
+    reveal.hidden = false;
+    reveal.className = 'reveal tier-' + t.key;
+    revealItem.textContent = chosen.name;
+    revealMeta.innerHTML = t.label + ' · ' + dz + ' · ' + time;
+
+    if(isExampleLedger){
+      ledger = [];
+      isExampleLedger = false;
+      ledgerNote.textContent = 'Guardado en tu navegador.';
+    }
+    ledger.unshift({dz:dz, time:time, item:chosen.name, tier:t.key});
+    ledger = ledger.slice(0, MAX_LEDGER_ROWS);
+    saveLedger();
+    renderLedger();
+
+    statusText.textContent = 'Entregado: ' + chosen.name + ' (' + t.label + ').';
+    running = false;
+    setControlsEnabled(true);
+  }
+
+  deployBtn.addEventListener('click', deploy);
+
+  (function initManifestNo(){
+    var now = new Date();
+    var no = 'M-' + now.getFullYear() + pad2(now.getMonth()+1) + pad2(now.getDate()) + '-' + Math.floor(1000 + Math.random()*9000);
+    document.getElementById('manifestNo').textContent = no;
+  })();
+
+  renderManifest();
+  renderLedger();
+})();
+</script>
